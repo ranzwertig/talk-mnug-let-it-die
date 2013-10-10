@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>reveal.js - The HTML Presentation Framework</title>
+
+        <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+        <meta name="author" content="Hakim El Hattab">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/simple-new.css" id="theme">
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/highlight/ascetic.css">
+
+        <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+        <script>
+            document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+
+                <section>
+                    <h1>Let it die</h1>
+                    <h3>long running processes in nodejs</h3>
+                    <p>
+                        <small>Created by <a href="http://www.christianranz.com">Christian Ranz</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <h2>common problems</h2>
+                    <ul>
+                        <li>memory consumption rises</li>
+                        <li>db connections die</li>
+                        <li>application walks into a dead end</li>
+                        <li>servers get shut down</li>
+                        <li>...</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>the solution</h2>
+                    <p>There is not just a single tool to use. We need to …</p>
+                    <ul>
+                        <li class="fragment">… design our <em>application</em> the right way.</li>
+                        <li class="fragment">… kepp your <em>data structures</em> as simple as possible.</li>
+                        <li class="fragment">… a good an robust <em>monitoring</em>.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Application design</h2>
+                    <aside class="notes">
+                        In the section application design, I will talk about the design of a typical daemon which processes data from one queue into another.
+                        I will talk about logging and keeping the application healty.
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Example: a simple daemon</h2>
+                    <img src="images/simple-daemon-1.png" alt="structure of simple queue daemon">
+                    <aside class="notes">discuss files: 1_queuedaemon.js</aside>
+                </section>
+
+                <section>
+                    <h2>Recovery</h2>
+                    <p>
+                        There should be no data loss after a uncontrolled shutdown.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Recovery</h2>
+                    <img src="images/simple-daemon-2.png" alt="structure of simple queue daemon with recovery">
+                </section>
+
+                <section>
+                    <h2>What about controlled kills &amp; shutdowns</h2>
+                    <ul>
+                        <li>SIGINT</li>
+                        <li>SIGTERM</li>
+                    </ul>
+                    <aside class="notes">For signal explanation see <a href="http://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html">http://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html</a></aside>
+                </section>
+
+                <section>
+                    <h2>Logging</h2>
+                    <ul class="fragment">
+                        <li>logging has to be robust</li>
+                        <li>you don't like to lose logs in any error case</li>
+                    </ul>
+                    <p class="fragment">
+                        When you decide about the way you are logging think about a having a save way in cases like uncaught exceptions.
+                    </p>
+                </section>
+
+                <!-- TODO add application design slides -->
+
+                <section>
+                    <h2>Data structures</h2>
+                    <aside class="notes">
+                        To make a application more robust we can try to keep data structures very simple.
+                        If this doesn't work we have to use concepts like transactions.
+                    </aside>
+                </section>
+
+                <!-- TODO add data structure slides -->
+
+                <section>
+                    <h2>Monitoring and Demonization</h2>
+                    <aside class="notes">
+                        We should have a pretty robust application now, but if somethoing fails,
+                        we like to know that something fails
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>upstart</h2>
+                    <ul>
+                        <li>run nodejs as a daemon</li>
+                        <li>easy set of commands like start/stop</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>upstart conf</h2>
+                        <pre><code>
+#!upstart
+description "node.js daemon"
+author      "chris"
+
+start on startup
+stop on shutdown
+
+script
+    export HOME="/root"
+
+    echo $$ > /var/run/node-daemon.pid
+    exec sudo -u vagrant node /vagrant/node/qeuedaemon-monit.js >> /var/log/node-daemon.log 2>&1
+end script
+
+pre-start script
+    # Date format same as (new Date()).toISOString() for consistency
+    echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Starting" >> /var/log/node-daemon.log
+end script
+
+pre-stop script
+    rm /var/run/node-daemon.pid
+    echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Stopping" >> /var/log/node-daemon.log
+end script
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>monit</h2>
+                    <ul>
+                        <li>a set of tests evaluated in configurable intervals</li>
+                        <li>monitor (almost) everything</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>what do we monitor</h2>
+                    <ul>
+                        <li class="fragment">the node process itself</li>
+                        <li class="fragment">cpu and memory usage</li>
+                        <li class="fragment">process uptime</li>
+                        <li class="fragment">process health</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>node process</h2>
+                    <pre><code>
+check process node
+    with pidfile "/var/run/node-daemon.pid"
+    start program = "/sbin/start node-daemon"
+    stop program  = "/sbin/stop node-daemon"
+    if changed pid
+        then restart
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>cpu and memory</h2>
+                    <pre><code>
+check process node
+    with pidfile "/var/run/node-daemon.pid"
+    start program = "/sbin/start node-daemon"
+    stop program  = "/sbin/stop node-daemon"
+    if changed pid
+        then restart
+    if totalmemory > 2% for 5 cycles
+        then alert
+    if totalmemory > 10% for 5 cycles
+        then restart
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>process uptime</h2>
+                    <pre><code>
+check file node_forcekill path "/var/run/node-daemon.pid" every 10 cycles
+    start program = "/sbin/start node-daemon"
+    stop program  = "/sbin/stop node-daemon"
+    if timestamp > 1 days
+        then restart
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>process health</h2>
+                    <pre><code>
+check file node_alive path "/var/log/node-daemon-alive.log"
+    start program = "/sbin/start node-daemon"
+    stop program  = "/sbin/stop node-daemon"
+    if timestamp > 30 seconds
+        then exec "/bin/bash -c 'kill -s SIGKILL `cat /var/run/node-daemon.pid`'"
+                    </code></pre>
+                </section>
+
+                <section>
+                    <ul>
+                        <li class="fragment">write good quality code</li>
+                        <li class="fragment">write and run tests</li>
+                        <li class="fragment">get to know your application</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>wrap-up</h2>
+                    <p class="fragment">
+                        Initial state is the best state.
+                    </p>
+                    <p class="fragment">
+                        so <b>let it die</b>...
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Resources</h2>
+                    <ul>
+                        <li>
+                            Monit Documentation and Download<br>
+                            <a href="http://mmonit.com/monit/">http://mmonit.com/monit/</a>
+                        </li>
+                        <li>
+                            Short introduction into monit and upstart
+                            <a href="http://howtonode.org/deploying-node-upstart-monit">http://howtonode.org/deploying-node-upstart-monit</a>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>thanks for listening</h3>
+                    <h1>Questions?</h1>
+                </section>
+
+            </div>
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+        <script src="pligin/highlight.js"></script>
+        <script>
+            hljs.tabReplace = '    ';
+            hljs.initHighlightingOnLoad();
+        </script>
+
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: false,
+                progress: true,
+                history: true,
+                center: true,
+
+                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>

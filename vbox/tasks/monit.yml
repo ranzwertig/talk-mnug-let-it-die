@@ -1,0 +1,8 @@
+# Install Monit
+- name: "Install Monit"
+  apt: pkg=monit state=installed update-cache=yes
+  tags:
+    - monit
+
+- name: Restart monit
+  action: service name=monit state=restarted

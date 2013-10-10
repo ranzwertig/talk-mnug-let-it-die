@@ -1,0 +1,7 @@
+flushall
+lpush in http://www.google.de
+lpush in http://www.mnug.de
+lpush in http://www.mnug.org
+lpush in http://www.mnug.com
+lpush in http://www.mnug.io
+lpush in http://www.mnug.de/notthere

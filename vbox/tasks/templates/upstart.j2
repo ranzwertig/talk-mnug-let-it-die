@@ -1,0 +1,23 @@
+#!upstart
+description "node.js daemon"
+author      "chris"
+
+start on startup
+stop on shutdown
+
+script
+    export HOME="/root"
+
+    echo $$ > /var/run/node-daemon.pid
+    exec sudo -u vagrant node /vagrant/node/qeuedaemon-monit.js >> /var/log/node-daemon.log 2>&1
+end script
+
+pre-start script
+    # Date format same as (new Date()).toISOString() for consistency
+    echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Starting" >> /var/log/node-daemon.log
+end script
+
+pre-stop script
+    rm /var/run/node-daemon.pid
+    echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Stopping" >> /var/log/node-daemon.log
+end script

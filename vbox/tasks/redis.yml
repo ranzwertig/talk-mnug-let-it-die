@@ -1,0 +1,11 @@
+# Install Redis server
+- name: "Install Redis server: redis-server"
+  apt: pkg=redis-server state=installed update-cache=yes
+  tags:
+    - redis
+
+# Ensure Redis server is running
+- name: "Ensure Redis server is running"
+  service: name=redis-server state=started
+  tags:
+    - redis

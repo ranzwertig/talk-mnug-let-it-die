@@ -1,0 +1,24 @@
+set daemon 10
+
+check process node
+    with pidfile "/var/run/node-daemon.pid"
+    start program = "/sbin/start node-daemon"
+    stop program  = "/sbin/stop node-daemon"
+    if changed pid
+        then restart
+    if totalmemory > 2% for 5 cycles
+        then alert
+    if totalmemory > 10% for 5 cycles
+        then restart
+
+check file node_forcekill path "/var/run/node-daemon.pid" every 10 cycles
+    start program = "/sbin/start node-daemon"
+    stop program  = "/sbin/stop node-daemon"
+    if timestamp > 1 days
+        then restart
+
+check file node_alive path "/var/log/node-daemon-alive.log"
+    start program = "/sbin/start node-daemon"
+    stop program  = "/sbin/stop node-daemon"
+    if timestamp > 30 seconds
+        then exec "/bin/bash -c 'kill -s SIGKILL `cat /var/run/node-daemon.pid`'"

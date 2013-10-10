@@ -1,0 +1,29 @@
+- name: Add Upstart Configuration
+  action: template src=tasks/templates/upstart.j2 dest=/etc/init/node-daemon.conf
+  tags:
+    - configuration
+
+- name: Add Monit Configuration
+  action: template src=tasks/templates/monit.j2 dest=/etc/monit/conf.d/node-daemon
+  tags:
+    - configuration
+
+- name: Create alive log
+  action: command touch /var/log/node-daemon-alive.log
+  tags:
+    - configuration
+
+- name: Set alive file permissions
+  action: command chmod 777 /var/log/node-daemon-alive.log
+  tags:
+    - configuration
+
+- name: Set alive file owner
+  action: command chown vagrant:vagrant /var/log/node-daemon-alive.log
+  tags:
+    - configuration
+
+- name: Restart monit
+  action: service name=monit state=restarted
+  tags:
+    - configuration

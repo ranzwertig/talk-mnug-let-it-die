@@ -1,0 +1,39 @@
+/vbox/.vagrant
+/node_modules
+/bin
+/lib
+/test
+index.js
+index.js.map
+debian
+/vbox/vagrant_ansible_inventory_default
+
+# OSX
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# vim
+.*.sw[a-z]
+*.un~
+Session.vim
+
+# SublimeText project files
+/*.sublime-project
+*.sublime-workspace
+/sftp-config.json
+
+# others
+.project
+*.tmp
+*~
+*.bak
+local.properties
+.settings
+.classpath
+.loadpath
+.directory
+
+# tests
+.build

@@ -1,0 +1,30 @@
+{
+  "name": "let-it-die",
+  "version": "0.0.1",
+  "description": "Presentation about long running processes",
+  "homepage": "http://www.christianranz.com",
+  "scripts": {},
+  "author": {
+    "name": "Christian Ranz",
+    "email": "info@chrisitanranz.com",
+    "web": "http://www.christianranz.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": "~0.8.0"
+  },
+  "dependencies": {
+    "underscore": "~1.5.1",
+    "redis": "0.8.4",
+    "request": "2.27.0"
+  },
+  "devDependencies": {},
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ]
+}

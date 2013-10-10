@@ -1,0 +1,19 @@
+---
+- hosts: all
+  sudo: yes
+  user: vagrant
+
+  vars:
+    node_version: "0.10.12"
+    node_prefix: "node-v${node_version}"
+    node_tarball: "${node_prefix}.tar.gz"
+    node_path: "/usr/local"
+
+
+  tasks:
+    - include: tasks/tools.yml
+    - include: tasks/build-essentials.yml
+    - include: tasks/redis.yml
+    - include: tasks/monit.yml
+    - include: tasks/nodejs.yml
+    - include: tasks/setup.yml
