@@ -51,18 +51,18 @@
                         <li>memory consumption rises</li>
                         <li>db connections die</li>
                         <li>application walks into a dead end</li>
-                        <li>servers get shut down</li>
+                        <li>servers shut down</li>
                         <li>...</li>
                     </ul>
                 </section>
 
                 <section>
-                    <h2>the solution</h2>
+                    <h2>The solution</h2>
                     <p>There is not just a single tool to use. We need to …</p>
                     <ul>
                         <li class="fragment">… design our <em>application</em> the right way.</li>
-                        <li class="fragment">… kepp your <em>data structures</em> as simple as possible.</li>
-                        <li class="fragment">… a good an robust <em>monitoring</em>.</li>
+                        <li class="fragment">… keep your <em>data structures</em> as simple as possible.</li>
+                        <li class="fragment">… a good and robust <em>monitoring</em>.</li>
                     </ul>
                 </section>
 
@@ -70,7 +70,7 @@
                     <h2>Application design</h2>
                     <aside class="notes">
                         In the section application design, I will talk about the design of a typical daemon which processes data from one queue into another.
-                        I will talk about logging and keeping the application healty.
+                        I will talk about logging and keeping the application healthy.
                     </aside>
                 </section>
 
@@ -83,7 +83,7 @@
                 <section>
                     <h2>Recovery</h2>
                     <p>
-                        There should be no data loss after a uncontrolled shutdown.
+                        There should be no data loss after an uncontrolled shutdown.
                     </p>
                 </section>
 
@@ -105,10 +105,10 @@
                     <h2>Logging</h2>
                     <ul class="fragment">
                         <li>logging has to be robust</li>
-                        <li>you don't like to lose logs in any error case</li>
+                        <li>you don't like to loose logs in any error case</li>
                     </ul>
                     <p class="fragment">
-                        When you decide about the way you are logging think about a having a save way in cases like uncaught exceptions.
+                        When you decide about the way you are logging, think about, having a save way in cases like uncaught exceptions.
                     </p>
                 </section>
 
@@ -122,7 +122,7 @@
                         <li class="fragment">do rollbacks in error case to maintain propper state</li>
                     </ul>
                     <aside class="notes">
-                        To make a application more robust we can try to keep data structures very simple.
+                        To make an application more robust we can try to keep data structures very simple.
                         If this doesn't work we have to use concepts like transactions.
                     </aside>
                 </section>
@@ -130,23 +130,23 @@
                 <!-- TODO add data structure slides -->
 
                 <section>
-                    <h2>Monitoring and Demonization</h2>
+                    <h2>Monitoring and demonization</h2>
                     <aside class="notes">
-                        We should have a pretty robust application now, but if somethoing fails,
-                        we like to know that something fails
+                        We should have a pretty robust application now, but if something fails,
+                        we so like to know that something fails
                     </aside>
                 </section>
 
                 <section>
-                    <h2>upstart</h2>
+                    <h2>Upstart</h2>
                     <ul>
-                        <li>run nodejs as a daemon</li>
-                        <li>easy set of commands like start/stop</li>
+                        <li>Run nodejs as a daemon</li>
+                        <li>Easy set of commands like start/stop</li>
                     </ul>
                 </section>
 
                 <section>
-                    <h2>upstart conf</h2>
+                    <h2>Upstart conf</h2>
                         <pre><code>
 #!upstart
 description "node.js daemon"
@@ -175,25 +175,25 @@ end script
                 </section>
 
                 <section>
-                    <h2>monit</h2>
+                    <h2>Monit</h2>
                     <ul>
-                        <li>a set of tests evaluated in configurable intervals</li>
-                        <li>monitor (almost) everything</li>
+                        <li>A set of tests evaluated in configurable intervals</li>
+                        <li>Monitor (almost) everything</li>
                     </ul>
                 </section>
 
                 <section>
                     <h2>what do we monitor</h2>
                     <ul>
-                        <li class="fragment">the node process itself</li>
-                        <li class="fragment">cpu and memory usage</li>
-                        <li class="fragment">process uptime</li>
-                        <li class="fragment">process health</li>
+                        <li class="fragment">The node process itself</li>
+                        <li class="fragment">Cpu and memory usage</li>
+                        <li class="fragment">Process uptime</li>
+                        <li class="fragment">Process health</li>
                     </ul>
                 </section>
 
                 <section>
-                    <h2>node process</h2>
+                    <h2>Node process</h2>
                     <pre><code>
 check process node
     with pidfile "/var/run/node-daemon.pid"
@@ -205,7 +205,7 @@ check process node
                 </section>
 
                 <section>
-                    <h2>cpu and memory</h2>
+                    <h2>Cpu and memory</h2>
                     <pre><code>
 check process node
     with pidfile "/var/run/node-daemon.pid"
@@ -221,7 +221,7 @@ check process node
                 </section>
 
                 <section>
-                    <h2>process uptime</h2>
+                    <h2>Process uptime</h2>
                     <pre><code>
 check file node_forcekill path "/var/run/node-daemon.pid" every 10 cycles
     start program = "/sbin/start node-daemon"
@@ -232,7 +232,7 @@ check file node_forcekill path "/var/run/node-daemon.pid" every 10 cycles
                 </section>
 
                 <section>
-                    <h2>process health</h2>
+                    <h2>Process health</h2>
                     <pre><code>
 check file node_alive path "/var/log/node-daemon-alive.log"
     start program = "/sbin/start node-daemon"
@@ -275,7 +275,7 @@ check file node_alive path "/var/log/node-daemon-alive.log"
                 </section>
 
                 <section>
-                    <h3>thanks for listening</h3>
+                    <h3>Thanks for listening</h3>
                     <h1>Questions?</h1>
                 </section>
 
