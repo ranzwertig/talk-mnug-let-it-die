@@ -1,7 +1,6 @@
 /vbox/.vagrant
 /node_modules
 /bin
-/lib
 /test
 index.js
 index.js.map
