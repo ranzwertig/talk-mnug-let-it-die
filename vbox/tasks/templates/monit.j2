@@ -22,3 +22,13 @@ check file node_alive path "/var/log/node-daemon-alive.log"
     stop program  = "/sbin/stop node-daemon"
     if timestamp > 30 seconds
         then exec "/bin/bash -c 'kill -s SIGKILL `cat /var/run/node-daemon.pid`'"
+
+
+
+# check process nodejs with pidfile "/var/run/node-server.pid"
+#     start program = "/sbin/start node-server"
+#     stop program  = "/sbin/stop node-server"
+#     if failed port 8000 protocol HTTP
+#         request /
+#         with timeout 10 seconds
+#         then restart
